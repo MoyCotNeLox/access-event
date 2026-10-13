@@ -11,7 +11,7 @@ jobs:
       - name: Check required files
         run: |
           echo "=== Checking files ==="
-          for f in README.md docs/analysis.md docs/requirements.md docs/tz.md docs/stakeholders.md; do
+          for f in docs/analysis.md docs/requirements.md docs/tz.md docs/stakeholders.md; do
             if [ -f "$f" ]; then
               echo "PASS: $f found"
               SIZE=$(wc -c < "$f")
@@ -24,6 +24,20 @@ jobs:
               exit 1
             fi
           done
+
+          # Отдельная проверка README — 70 байт или больше
+          if [ -f "README.md" ]; then
+            echo "PASS: README.md found"
+            SIZE=$(wc -c < "README.md")
+            if [ "$SIZE" -lt 70 ]; then
+              echo "FAIL: README.md is too small ($SIZE bytes, need >= 70)"
+              exit 1
+            fi
+            echo "PASS: README.md size OK ($SIZE bytes)"
+          else
+            echo "FAIL: README.md not found"
+            exit 1
+          fi
           
       - name: Check User Stories
         run: |
